@@ -1,64 +1,77 @@
-name: Firmware Build
+name: Build ZMK Firmware
 
 on:
   push:
-    branches: [ main ]
+    branches: [ config-main ]
   pull_request:
-    branches: [ main ]
+    branches: [ config-main ]
   workflow_dispatch:
-    inputs:
-      log_profile:
-        description: 'Logging profile (release/dev)'
-        required: false
-        default: 'release'
 
 jobs:
   build:
-    name: Build Matrix
     runs-on: ubuntu-latest
-    container: docker.io/zmkfirmware/zmk-build-arm:stable
     strategy:
       fail-fast: false
       matrix:
         include:
           - board: nice_nano_v2
             shield: charybdis_left
-            artifact_name: firmware-charybdis_left
+            artifact: firmware-charybdis_left
             cmake_args: '-DCONFIG_ZMK_STUDIO=n'
           - board: nice_nano_v2
             shield: charybdis_right
-            artifact_name: firmware-charybdis_right
+            artifact: firmware-charybdis_right
             snippet: studio-rpc-usb-uart
             cmake_args: '-DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n'
           - board: nice_nano_v2
             shield: settings_reset
-            artifact_name: firmware-settings_reset
+            artifact: firmware-settings_reset
             cmake_args: ''
+
+    env:
+      ZMK_CONFIG: ${{ github.workspace }}/config
+
     steps:
       - name: Checkout config repo
         uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          path: config
-      # west, toolchain, pythonは公式コンテナに同梱済み
-      - name: Init west workspace
+          python-version: '3.12'
+
+      - name: Install west + deps
         run: |
-          west init -l config
+          python -m pip install --upgrade pip
+          pip install west
+
+      - name: Init west workspace (in-place)
+        run: |
+          west init -l .
           west update
           west zephyr-export
+
       - name: Build (${{ matrix.shield }})
-        env:
-          LOG_PROFILE: ${{ github.event.inputs.log_profile || 'release' }}
         run: |
           build_dir=build/${{ matrix.shield }}
-                    west build -s zmk/app -b ${{ matrix.board }} -d $build_dir -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=${GITHUB_WORKSPACE}/config ${{ matrix.cmake_args }} -DLOG_PROFILE=${LOG_PROFILE} ${{ matrix.snippet && format('-DSNIPPET={0}', matrix.snippet) || '' }}
+          west build -s zmk/app -b ${{ matrix.board }} -d $build_dir -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=$ZMK_CONFIG ${{ matrix.cmake_args }} ${{ matrix.snippet && format('-DSNIPPET={0}', matrix.snippet) || '' }}
+
       - name: Collect UF2
-        if: success()
-        run: cp build/${{ matrix.shield }}/zephyr/zmk.uf2 ${{ matrix.artifact_name }}.uf2
+        if: always()
+        run: |
+          mkdir -p artifacts
+          cp build/${{ matrix.shield }}/zephyr/zmk.uf2 artifacts/${{ matrix.artifact }}.uf2 || true
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}.uf2
-          retention-days: 7
-      - name: Disk usage
-        run: du -sh build/${{ matrix.shield }}/zephyr || true
+          name: ${{ matrix.artifact }}
+          path: artifacts/${{ matrix.artifact }}.uf2
+          if-no-files-found: warn
+
+  aggregate:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Summary
+        run: echo "Firmware build matrix completed."
