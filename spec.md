@@ -59,7 +59,7 @@
 - vendor prefix (pixart 等) -> 必要なら upstream prefix file 追加検討 (未対応メモ)
 
 ## 今後の改善候補 (Purpose: Backlog 可視化)
-- ロギングレベル プロファイル化 (dev/release)
+- ロギングレベル プロファイル化 (dev/release) -> 実装仕様追加 (下記参照)
 - ポインタ processor dtsi 実装と調整
 - Bluetooth ペアリング関連 UX の README 追記
 
@@ -69,4 +69,24 @@
 - &mkp 廃止 -> 標準 MS_BTN1/2 に移行
 - CI build matrix artifact 名称追加
 - orphan branch config-main で軽量化 (config-only)
+
+## ロギングプロファイル仕様 (Purpose: 開発/運用での出力制御)
+| プロファイル | 目的 | 主設定例 | 有効化方法 |
+|---------------|------|----------|-------------|
+| dev | 開発時の詳細トレース (問題解析) | `CONFIG_LOG=y`, `CONFIG_LOG_DEFAULT_LEVEL=4`, `CONFIG_ZMK_LOG_LEVEL=4` | `-DLOG_PROFILE=dev` 指定 |
+| release | 安定運用でのノイズ削減 | `CONFIG_LOG=y`, `CONFIG_LOG_DEFAULT_LEVEL=2`, `CONFIG_ZMK_LOG_LEVEL=2` | 既定 (指定なし) |
+
+### 実装方針
+1. `config/log_dev.conf` と `config/log_release.conf` を作成し差分のみ記載。
+2. CMake 変数 `LOG_PROFILE` を参照する `CMakeLists.txt` 拡張 (後続タスク) で dev 選択時に dev.conf を追加。
+3. GitHub Actions で matrix 拡張し dev ビルドを追加可能。
+
+### 例 (dev プロファイルビルド)
+```bash
+west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=charybdis_left -DZMK_CONFIG=$PWD/config -DLOG_PROFILE=dev
+```
+
+### 注意
+* release でも最低限の警告出力維持のため `CONFIG_LOG=y`。
+* メモリ圧迫時はスタックサイズやログバッファ関連 Kconfig を調整。
 
