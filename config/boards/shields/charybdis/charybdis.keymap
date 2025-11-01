@@ -40,48 +40,44 @@
         // Layer 0: Default - QWERTY layout (matched to reference)
         // Note: trackball-bindings <&tmv_coarse> in reference (old API, not applicable to new input-processors)
         layer_0_default {
-            label = "Default";
             bindings = <
 &kp ESC         &kp N1  &kp N2  &kp N3        &kp N4     &kp N5      &kp N6     &kp N7     &kp N8     &kp N9            &kp N0    &kp BACKSPACE
 &kp TAB         &kp Q   &kp W   &kp E         &kp R      &kp T       &kp Y      &kp U      &kp I      &kp O             &kp P     &kp BSLH
 &kp LSHFT       &kp A   &kp S   &kp D         &kp F      &kp G       &kp H      &kp J      &kp K      &kp L             &kp SEMI  &kp SQT
 &kp LCTRL       &kp Z   &kp X   &kp C         &kp V      &kp B       &kp N      &kp M      &kp COMMA  &kp LBKT          &kp FSLH  &kp MINUS
                                 &kp LGUI      &kp SPACE  &mo 1       &kp LALT   &kp GRAVE
-                                              &mkp LCLK  &mkp RCLK   &kp ENTER
+                                              &kp MS_BTN1  &kp MS_BTN2   &kp ENTER
             >;
         };
 
         // Layer 1: Function - F-keys, navigation (matched to reference)
         // Note: trackball-bindings <&tsl> in reference (scroll mode, old API)
         layer_1_fn {
-            label = "Fn";
             bindings = <
 &kp F1          &kp F2  &kp F3  &kp F4        &kp F5     &kp F6        &kp F7     &kp F8      &kp F9      &kp F10            &kp F11  &kp F12
 &kp CAPS        &none   &none   &none         &none      &bt BT_NXT    &none      &none       &kp UP      &none              &none    &none
 &kp LSHFT       &none   &none   &none         &none      &bt BT_CLR    &none      &kp LEFT    &kp DOWN    &kp RIGHT          &none    &none
 &kp LCTRL       &none   &none   &none         &none      &none         &none      &none       &kp PERIOD  &kp RBKT           &none    &kp EQUAL
                                 &kp LGUI      &kp SPACE  &none         &kp LALT   &kp DELETE
-                                              &mkp LCLK  &mkp RCLK     &kp ENTER
+                                              &kp MS_BTN1  &kp MS_BTN2     &kp ENTER
             >;
         };
 
         // Layer 2: Wheel - Scroll mode
         // Note: trackball-bindings <&tsl> in reference (scroll mode, old API)
         layer_2_wheel {
-            label = "Wheel";
             bindings = <
 &kp ESC         &none      &none      &none      &none       &none    &none      &none      &none      &none       &none      &kp BACKSPACE
 &kp TAB         &kp PG_UP  &kp HOME   &kp UP     &kp END     &none    &none      &kp HOME   &kp UP     &kp END     &kp PG_UP  &none
 &kp LSHFT       &kp PG_DN  &kp LEFT   &kp DOWN   &kp RIGHT   &none    &none      &kp LEFT   &kp DOWN   &kp RIGHT   &kp PG_DN  &none
 &kp LCTRL       &none      &none      &none      &none       &none    &none      &none      &none      &none       &none      &none
-                                      &none      &none       &none    &none      &mkp RCLK
-                                                 &none       &none    &mkp LCLK
+                                      &none      &none       &none    &none      &kp MS_BTN2
+                                                 &none       &none    &kp MS_BTN1
             >;
         };
 
         // Layer 3: Config - Bluetooth pairing
         layer_3_config {
-            label = "Config";
             bindings = <
 &none  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &none  &none  &none  &none  &none  &bt BT_CLR
 &none  &none         &none         &none         &none         &none           &none  &none  &none  &none  &none  &none
