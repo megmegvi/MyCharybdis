@@ -1,0 +1,79 @@
+// Charybdis pointer configuration (for official ZMK main with input-processors)
+// Based on zmk-for-charybdis reference but adapted to Modern ZMK Pointing API
+
+#include <dt-bindings/input.h>
+#include <dt-bindings/zmk/input_transform.h>
+
+/ {
+    // Input Listener: connects trackball device to processor pipeline
+    // This is the critical component that was missing - without it, trackball events
+    // never reach the HID system even if the sensor is working correctly.
+    trackball_listener: input_listener {
+        compatible = "zmk,input-listener";
+        device = <&trackball>;
+        
+        // Base processors (Layer 0 - Default): Pointer mode
+        // Scaler 1/2: Replaces hardware CONFIG_PMW3610_CPI_DIVIDOR=2 (now removed from .conf)
+        // Pipeline: trackball → scale(1/2) → identity_map → HID
+        // Note: X_INVERT removed - hardware orientation is correct
+        input-processors = <&pointer_scaler 1 2 
+                           &pointer_mapper>;
+
+        // Layer 1 override (Fn): Scroll mode - trackball moves scroll wheel
+        scroll_layer_1 {
+            layers = <1>;
+            input-processors = <&pointer_scaler 1 2 
+                               &pointer_mapper 
+                               &xy_to_scroll_mapper>;
+        };
+        
+        // Layer 2 override (Wheel): Scroll mode - same as layer 1
+        scroll_layer_2 {
+            layers = <2>;
+            input-processors = <&pointer_scaler 1 2 
+                               &pointer_mapper 
+                               &xy_to_scroll_mapper>;
+        };
+    };
+
+    pointer_scaler: scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <0x02>; // INPUT_EV_REL
+        codes = <0x00 0x01>; // REL_X, REL_Y
+        track-remainders;
+        // Scale factors: multiplier and divisor passed as cell params in processors ref
+        // Current: 1/2 = 0.5x (replaces hardware CPI_DIVIDOR=2, effective CPI 400/2=200)
+    };
+
+    pointer_mapper: mapper {
+        compatible = "zmk,input-processor-code-mapper";
+        #input-processor-cells = <0>;
+        type = <0x02>; // INPUT_EV_REL
+        // Identity mapping: pass through X/Y as-is
+        map = <0x00 0x00   // REL_X -> REL_X
+               0x01 0x01>; // REL_Y -> REL_Y
+    };
+
+    pointer_transform: transform {
+        compatible = "zmk,input-processor-transform";
+        #input-processor-cells = <1>;
+        type = <0x02>; // INPUT_EV_REL
+        x-codes = <0x00>; // REL_X
+        y-codes = <0x01>; // REL_Y
+        // Transform flags passed as param1 in processors ref (e.g., INPUT_TRANSFORM_X_INVERT)
+    };
+
+    xy_to_scroll_mapper: xy_to_scroll_mapper {
+        compatible = "zmk,input-processor-code-mapper";
+        #input-processor-cells = <0>;
+        type = <0x02>; // INPUT_EV_REL
+        // Map X/Y movement to horizontal/vertical scroll
+        map = <0x00 0x06   // REL_X (0x00) -> REL_HWHEEL (0x06)
+               0x01 0x08>; // REL_Y (0x01) -> REL_WHEEL (0x08)
+    };
+};
+
+&trackball {
+    status = "okay"; // Enable PMW3610 trackball
+};

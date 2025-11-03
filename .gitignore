@@ -1,0 +1,9 @@
+# Config-only repo ignore
+firmware/*.uf2
+build/
+build_right/
+zephyr/
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+.vscode/
