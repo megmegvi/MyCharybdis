@@ -16,7 +16,7 @@ jobs:
   build:
     name: Build Matrix
     runs-on: ubuntu-latest
-    container: ghcr.io/zmkfirmware/zmk-build-arm:stable
+    container: docker.io/zmkfirmware/zmk-build-arm:stable
     strategy:
       fail-fast: false
       matrix:
