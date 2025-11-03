@@ -37,10 +37,12 @@ jobs:
     steps:
       - name: Checkout config repo
         uses: actions/checkout@v4
+        with:
+          path: config
       # west, toolchain, pythonは公式コンテナに同梱済み
       - name: Init west workspace
         run: |
-          west init -l .
+          west init -l config
           west update
           west zephyr-export
       - name: Build (${{ matrix.shield }})
@@ -48,7 +50,7 @@ jobs:
           LOG_PROFILE: ${{ github.event.inputs.log_profile || 'release' }}
         run: |
           build_dir=build/${{ matrix.shield }}
-          west build -s zmk/app -b ${{ matrix.board }} -d $build_dir -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=${{ github.workspace }}/config ${{ matrix.cmake_args }} -DLOG_PROFILE=${LOG_PROFILE} ${{ matrix.snippet && format('-DSNIPPET={0}', matrix.snippet) || '' }}
+                    west build -s zmk/app -b ${{ matrix.board }} -d $build_dir -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=${GITHUB_WORKSPACE}/config ${{ matrix.cmake_args }} -DLOG_PROFILE=${LOG_PROFILE} ${{ matrix.snippet && format('-DSNIPPET={0}', matrix.snippet) || '' }}
       - name: Collect UF2
         if: success()
         run: cp build/${{ matrix.shield }}/zephyr/zmk.uf2 ${{ matrix.artifact_name }}.uf2
