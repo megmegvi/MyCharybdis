@@ -62,6 +62,7 @@
 - ロギングレベル プロファイル化 (dev/release) -> 実装仕様追加 (下記参照)
 - ポインタ processor dtsi 実装と調整
 - Bluetooth ペアリング関連 UX の README 追記
+ - CI キャッシュ最適化 (west modules)
 
 ## 変更履歴要約 (Purpose: リファクタ追跡)
 - Overlay 統合 -> charybdis.dtsi
@@ -89,4 +90,37 @@ west build -s zmk/app -b nice_nano_v2 -- -DSHIELD=charybdis_left -DZMK_CONFIG=$P
 ### 注意
 * release でも最低限の警告出力維持のため `CONFIG_LOG=y`。
 * メモリ圧迫時はスタックサイズやログバッファ関連 Kconfig を調整。
+
+## CI ビルド仕様 (Purpose: 自動生成フローの明確化)
+Workflow: `.github/workflows/build.yml`
+
+### CI環境
+公式ZMKビルドコンテナ `ghcr.io/zmkfirmware/zmk-build-arm:stable` を使用。Python, west, toolchain, CMake, Ninja等は全て同梱済み。
+
+### トリガ
+* push / pull_request (branch: main)
+* 手動 `workflow_dispatch` (入力: `log_profile` デフォルト release)
+
+### マトリクス
+| board | shield | Studio | artifact_name |
+|-------|--------|--------|---------------|
+| nice_nano_v2 | charybdis_left | n | firmware-charybdis_left |
+| nice_nano_v2 | charybdis_right | y (snippet studio-rpc-usb-uart) | firmware-charybdis_right |
+| nice_nano_v2 | settings_reset | n | firmware-settings_reset |
+
+### ビルドステップ概要
+1. actions/checkout
+2. Python 3.12 設定 & west インストール
+3. `west init -l .` → `west update` → `west zephyr-export`
+4. `west build -s zmk/app -b <board> -d build/<shield> -- -DSHIELD=<shield> -DZMK_CONFIG=$WORKSPACE/config <cmake_args> -DLOG_PROFILE=<profile>`
+5. 生成された `zmk.uf2` を `<artifact_name>.uf2` にコピーしアップロード (保持期間 7 日)
+
+### ログプロファイル連携
+`workflow_dispatch` 入力 `log_profile` が環境変数 `LOG_PROFILE` として渡され `-DLOG_PROFILE=<value>` で CMake に供給。現状 CMake 側での conf 切替未実装 (後続タスク)。
+
+### 今後のCI改善案
+* west modules のキャッシュ (ZEPHYR_BASE, modules) 保存で高速化
+* dev/release 並列ビルド追加 (Matrix に log_profile 軸追加)
+* artifact に west manifest commit ハッシュ付与
+* act ローカル検証手順 README 追記
 

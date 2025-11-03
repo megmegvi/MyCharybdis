@@ -66,6 +66,11 @@ cp build/reset/zephyr/zmk.uf2 firmware_settings_reset.uf2
 - `nice_nano_v2` + `charybdis_right`  
 - `nice_nano_v2` + `settings_reset`
 
+#### CI環境について
+公式ZMKビルドコンテナ `ghcr.io/zmkfirmware/zmk-build-arm:stable` を使用。Python, west, toolchain, CMake, Ninja等は全て同梱済み。
+
+`workflow_dispatch` で `log_profile=dev` を指定することで (将来 CMake 拡張後) 開発向け詳細ログビルドを生成予定。
+
 ## バージョン固定
 ZMK & PMW3610 driver revisions pinned:
 ```
