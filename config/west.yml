@@ -16,4 +16,4 @@ manifest:
       path: modules/pmw3610
 
   self:
-    path: modern-zmk-config
+    path: config

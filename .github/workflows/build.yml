@@ -1,62 +1,7 @@
-name: Firmware Build
+name: Build
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
-    inputs:
-      log_profile:
-        description: 'Logging profile (release/dev)'
-        required: false
-        default: 'release'
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    name: Build Matrix
-    runs-on: ubuntu-latest
-    container: docker.io/zmkfirmware/zmk-build-arm:stable
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - board: nice_nano_v2
-            shield: charybdis_left
-            artifact_name: firmware-charybdis_left
-            cmake_args: '-DCONFIG_ZMK_STUDIO=n'
-          - board: nice_nano_v2
-            shield: charybdis_right
-            artifact_name: firmware-charybdis_right
-            snippet: studio-rpc-usb-uart
-            cmake_args: '-DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n'
-          - board: nice_nano_v2
-            shield: settings_reset
-            artifact_name: firmware-settings_reset
-            cmake_args: ''
-    steps:
-      - name: Checkout config repo
-        uses: actions/checkout@v4
-      # west, toolchain, pythonは公式コンテナに同梱済み
-      - name: Init west workspace
-        run: |
-          west init -l .
-          west update
-          west zephyr-export
-      - name: Build (${{ matrix.shield }})
-        env:
-          LOG_PROFILE: ${{ github.event.inputs.log_profile || 'release' }}
-        run: |
-          build_dir=build/${{ matrix.shield }}
-          west build -s zmk/app -b ${{ matrix.board }} -d $build_dir -- -DSHIELD=${{ matrix.shield }} -DZMK_CONFIG=${{ github.workspace }}/config ${{ matrix.cmake_args }} -DLOG_PROFILE=${LOG_PROFILE} ${{ matrix.snippet && format('-DSNIPPET={0}', matrix.snippet) || '' }}
-      - name: Collect UF2
-        if: success()
-        run: cp build/${{ matrix.shield }}/zephyr/zmk.uf2 ${{ matrix.artifact_name }}.uf2
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_name }}.uf2
-          retention-days: 7
-      - name: Disk usage
-        run: du -sh build/${{ matrix.shield }}/zephyr || true
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main

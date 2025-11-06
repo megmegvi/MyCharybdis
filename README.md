@@ -30,7 +30,32 @@ export PATH="$HOME/.local/bin:$PATH"  # 必要ならシェルに追加
 
 ## ビルド方法
 
-### ローカルビルド (初回)
+### 推奨: CI環境と同一のDockerビルド
+GitHub ActionsのCI環境と同じDockerコンテナを使ったビルド:
+
+```bash
+# 全ターゲットビルド (left, right, settings_reset)
+./build-local-ci.sh all
+
+# 特定ターゲットのみビルド
+./build-local-ci.sh charybdis_left
+./build-local-ci.sh charybdis_right
+./build-local-ci.sh settings_reset
+
+# 開発用詳細ログでビルド
+LOG_PROFILE=dev ./build-local-ci.sh all
+```
+
+生成されたUF2ファイルは `build-output/` に配置されます。
+
+**利点:**
+- CIと完全に同じ環境でビルド（ツールチェーンバージョンの一致保証）
+- ローカル環境を汚さない（Dockerコンテナ内で完結）
+- west/toolchainのインストール不要
+
+### 手動ローカルビルド (従来方式)
+westを直接使用する場合:
+
 ```bash
 west init -l .
 west update
@@ -48,8 +73,6 @@ cp build/right/zephyr/zmk.uf2 firmware_charybdis_right.uf2
 west build -s zmk/app -b nice_nano_v2 -d build/reset -p -- -DSHIELD=settings_reset -DZMK_CONFIG=$PWD/config
 cp build/reset/zephyr/zmk.uf2 firmware_settings_reset.uf2
 ```
-
-生成ファイル例: `firmware_charybdis_left.uf2` など。
 
 ### matrix-transform 変更手順
 1. 物理配線順 (col/row-gpios) は触らない
