@@ -46,7 +46,7 @@
 &kp LSHFT       &kp A   &kp S   &kp D         &kp F      &kp G       &kp H      &kp J      &kp K      &kp L             &kp SEMI  &kp SQT
 &kp LCTRL       &kp Z   &kp X   &kp C         &kp V      &kp B       &kp N      &kp M      &kp COMMA  &kp LBKT          &kp FSLH  &kp MINUS
                                 &kp LGUI      &kp SPACE  &mo 1       &kp LALT   &kp GRAVE
-                                              &kp MS_BTN1  &kp MS_BTN2   &kp ENTER
+                                              &mkp MB1     &mkp MB2      &kp ENTER
             >;
         };
 
@@ -59,7 +59,7 @@
 &kp LSHFT       &none   &none   &none         &none      &bt BT_CLR    &none      &kp LEFT    &kp DOWN    &kp RIGHT          &none    &none
 &kp LCTRL       &none   &none   &none         &none      &none         &none      &none       &kp PERIOD  &kp RBKT           &none    &kp EQUAL
                                 &kp LGUI      &kp SPACE  &none         &kp LALT   &kp DELETE
-                                              &kp MS_BTN1  &kp MS_BTN2     &kp ENTER
+                                              &mkp MB1     &mkp MB2        &kp ENTER
             >;
         };
 
@@ -71,8 +71,8 @@
 &kp TAB         &kp PG_UP  &kp HOME   &kp UP     &kp END     &none    &none      &kp HOME   &kp UP     &kp END     &kp PG_UP  &none
 &kp LSHFT       &kp PG_DN  &kp LEFT   &kp DOWN   &kp RIGHT   &none    &none      &kp LEFT   &kp DOWN   &kp RIGHT   &kp PG_DN  &none
 &kp LCTRL       &none      &none      &none      &none       &none    &none      &none      &none      &none       &none      &none
-                                      &none      &none       &none    &none      &kp MS_BTN2
-                                                 &none       &none    &kp MS_BTN1
+                                      &none      &none       &none    &none      &mkp MB2
+                                                 &none       &none    &mkp MB1
             >;
         };
 
