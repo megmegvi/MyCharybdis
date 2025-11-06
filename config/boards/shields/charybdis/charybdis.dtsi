@@ -27,6 +27,7 @@
     kscan0: kscan {
         compatible = "zmk,kscan-gpio-matrix";
         diode-direction = "row2col";
+        wakeup-source;  // Enable wakeup from deep sleep
         col-gpios = <&gpio0 2 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
                     <&gpio0 29 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,
                     <&gpio0 9 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>,

@@ -42,10 +42,10 @@
         layer_0_default {
             bindings = <
 &kp ESC         &kp N1  &kp N2  &kp N3        &kp N4     &kp N5      &kp N6     &kp N7     &kp N8     &kp N9            &kp N0    &kp BACKSPACE
-&kp TAB         &kp Q   &kp W   &kp E         &kp R      &kp T       &kp Y      &kp U      &kp I      &kp O             &kp P     &kp BSLH
-&kp LSHFT       &kp A   &kp S   &kp D         &kp F      &kp G       &kp H      &kp J      &kp K      &kp L             &kp SEMI  &kp SQT
-&kp LCTRL       &kp Z   &kp X   &kp C         &kp V      &kp B       &kp N      &kp M      &kp COMMA  &kp LBKT          &kp FSLH  &kp MINUS
-                                &kp LGUI      &kp SPACE  &mo 1       &kp LALT   &kp GRAVE
+&kp TAB         &kp Q   &kp W   &kp E         &kp R      &kp T       &kp Y      &kp U      &kp I      &kp O             &kp P     &kp LBKT
+&kp LSHFT       &kp A   &kp S   &kp D         &kp F      &kp G       &kp H      &kp J      &kp K      &kp L             &kp SEMI  &kp BSLH  
+&kp LCTRL       &kp Z   &kp X   &kp C         &kp V      &kp B       &kp N      &kp M      &kp COMMA  &kp PERIOD        &kp FSLH  &kp MINUS
+                                &kp LGUI      &kp SPACE  &mo 1       &kp LALT   &kp SPACE
                                               &mkp MB1     &mkp MB2      &kp ENTER
             >;
         };
@@ -54,12 +54,12 @@
         // Note: trackball-bindings <&tsl> in reference (scroll mode, old API)
         layer_1_fn {
             bindings = <
-&kp F1          &kp F2  &kp F3  &kp F4        &kp F5     &kp F6        &kp F7     &kp F8      &kp F9      &kp F10            &kp F11  &kp F12
-&kp CAPS        &none   &none   &none         &none      &bt BT_NXT    &none      &none       &kp UP      &none              &none    &none
-&kp LSHFT       &none   &none   &none         &none      &bt BT_CLR    &none      &kp LEFT    &kp DOWN    &kp RIGHT          &none    &none
-&kp LCTRL       &none   &none   &none         &none      &none         &none      &none       &kp PERIOD  &kp RBKT           &none    &kp EQUAL
-                                &kp LGUI      &kp SPACE  &none         &kp LALT   &kp DELETE
-                                              &mkp MB1     &mkp MB2        &kp ENTER
+&kp F1          &kp F2    &kp F3   &kp F4   &kp F5    &kp F6        &kp F7     &kp F8      &kp F9      &kp F10            &kp F11  &kp F12
+&kp CAPS        &kp PG_UP &kp HOME &kp UP   &kp END   &bt BT_NXT    &none      &none       &kp UP      &none              &none    &kp RBKT
+&kp LSHFT       &kp PG_DN &kp LEFT &kp DOWN &kp RIGHT &bt BT_CLR    &none      &kp LEFT    &kp DOWN    &kp RIGHT          &none    &none
+&kp LCTRL       &none     &none    &none    &none     &none         &none      &none       &none       &kp SQT            &none    &kp EQUAL
+                                   &kp LGUI &kp SPACE &none         &kp GRAVE  &kp DELETE
+                                            &mkp MB1  &mkp MB2        &kp ENTER
             >;
         };
 
