@@ -22,7 +22,10 @@
         // Layer 1 override (Fn): Scroll mode - trackball moves scroll wheel
         scroll_layer_1 {
             layers = <1>;
+            // Invert Y before mapping to scroll to reverse vertical scroll direction only on Layer 1
+            // Order: scale -> transform (Y invert) -> identity map -> XY -> scroll codes
             input-processors = <&pointer_scaler 1 2 
+                               &pointer_transform (INPUT_TRANSFORM_Y_INVERT)
                                &pointer_mapper 
                                &xy_to_scroll_mapper>;
         };
