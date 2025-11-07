@@ -33,7 +33,7 @@
         // Layer 2 override (Wheel): Scroll mode - same as layer 1
         scroll_layer_2 {
             layers = <2>;
-            input-processors = <&pointer_scaler 1 2 
+            input-processors = <&pointer_scaler 1 4 
                                &pointer_mapper 
                                &xy_to_scroll_mapper>;
         };
